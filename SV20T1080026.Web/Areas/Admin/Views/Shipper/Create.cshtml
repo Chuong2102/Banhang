@@ -1,0 +1,41 @@
+﻿@model SV20T1080026.DomainModels.Shipper
+@{
+
+}
+
+
+<div class="box box-primary">
+    <div class="box-body">
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-warning">
+                <p>@ViewBag.ErrorMessage</p>
+            </div>
+        }
+        <form action="~/Admin/Shipper/Save" method="post">
+            <input type="hidden" name="@nameof(Model.ShipperID)" value="@Model.ShipperID" />
+            <div class="form-group">
+                <label>Tên đơn vị giao hàng</label>
+                @Html.TextBoxFor(c => c.ShipperName, new{ @class="form-control", @autofocus="autofocus"})
+                @Html.ValidationMessageFor(m => m.ShipperName,"", new {@style="color:red"})
+            </div>
+
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                @Html.TextBoxFor(c => c.Phone, new{ @class="form-control"})
+                @Html.ValidationMessageFor(m => m.Phone,"", new {@style="color:red"})
+            </div>
+
+            <div class="">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"></i> Lưu dữ liệu
+                </button>
+
+                <a href="~/Admin/Shipper" class="btn btn-default">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,82 @@
+﻿@model SV20T1080026.Web.Models.PaginationSearchInput
+@using SV20T1080026.BusinessLayers;
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+}
+
+<div class="box box-primary">
+    <div class="box-body">
+        <!--Form đầu vào tìm kiếm-->
+        <form id="formSearchInput" action="~/Admin/Order/Search" method="get">
+            <div class="row">
+                <div class="col-sm-2">
+                    <select id="listStatus" class="form-control" name="orderStatusID">
+                        @{
+                            var listStatuses = OrderDataService.ListOrderStatuses();
+                        }
+                        <option value="0">-- Trạng thái --</option>
+                        @foreach(var s in listStatuses)
+                        {
+                            <option value="@s.Status">@s.Description</option>
+                        }
+                        
+                    </select>
+                </div>
+                <div class="col-sm-10 input-group">
+                    <input type="text" name="searchValue"
+                           class="form-control"
+                           placeholder="Tìm kiếm theo tên khách hàng hoặc tên người giao hàng">
+                    @Html.HiddenFor(m => m.PageSize)
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat btn-info">
+                            <i class="fa fa-search"></i> Tìm kiếm
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </form>
+
+        <!-- Kết quả tìm kiếm -->
+        <div id="searchResult"></div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // Submit trang -> tim kiem tu trang 1
+            $('#formSearchInput').submit(function (e) {
+                //
+                e.preventDefault();
+                doSearch(1);
+                return;
+            });
+
+            doSearch(@Model.Page);
+        });
+
+        function doSearch(page) {
+            var url = $("#formSearchInput").prop("action");
+            var postData = $("#formSearchInput").serializeArray();
+            postData.push(
+                { "name": "page", "value": page },
+                { "name": "status", "value": $('#listStatus').val() }
+            );
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: postData,
+                error: function () {
+                    alert("Your request is not valid");
+                },
+                success: function (data) {
+                    $("#searchResult").html(data);
+                }
+            });
+
+            return;
+        }
+    </script>
+}

@@ -1,0 +1,165 @@
+﻿@model SV20T1080026.Web.Models.PaginationSearchOrder
+@using SV20T1080026.BusinessLayers;
+@{
+    
+    Layout = null;
+}
+
+<p style="margin:10px 0 10px 0">
+<p style="margin: 10px 0px 10px 0px ">Có <strong>@string.Format("{0:N0}", Model.RowCount)</strong> đơn hàng. Hiện đang ở trang <strong>@Model.Page</strong> trên tổng số <strong>@Model.PageCount</strong> trang</p>
+</p>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr class="bg-primary">
+                <th>Khách hàng</th>
+                <th>Ngày lập</th>
+                <th>Nhân viên phụ trách</th>
+                <th>Thời điểm duyệt</th>
+                <th>Đơn vị giao hàng</th>
+                <th>ngày nhận giao hàng</th>
+                <th>Thời điểm kết thúc</th>
+                <th>Trạng thái</th>
+                <th style="width:40px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var o in Model.Data)
+            {
+                <tr>
+                    <td>@CommonDataService.GetCustomer(o.CustomerID).CustomerName</td>
+                    <td>@o.OrderTime</td>
+                    <td>@CommonDataService.GetEmployee(o.EmployeeID).FullName</td>
+                    <td>@o.AcceptTime</td>
+                    <td>@CommonDataService.GetShipper(o.ShipperID).ShipperName</td>
+                    <td>@o.ShippedTime</td>
+                    <td>@o.FinishedTime</td>
+                    <td>@OrderDataService.GetOrderStatus(o.Status).Description</td>
+                    <td>
+                        <a href="~/Admin/Order/Details/@o.OrderID" class="btn btn-info btn-xs">
+                            <i class="glyphicon glyphicon-th-list"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@{
+    int startPage = Math.Max(Model.Page - 2, 1);
+    int endPage = Math.Min(Model.Page + 2, Model.PageCount);
+
+    if (startPage == 1)
+    {
+        endPage = startPage + 4;
+    }
+    else if (endPage == Model.PageCount)
+    {
+        startPage = endPage - 4;
+    }
+}
+
+@if (Model.PageCount <= 5)
+{
+    <div class="text-center">
+        <ul class="pagination">
+            @if (Model.Page > 1)
+            {
+                @* <li><a href="~/Admin/Customer?page=1&searchValue=@Model.SearchValue"><i class="fa fa-angle-double-left"></i></a></li>
+        <li><a href="~/Admin/Customer?page=@(@Model.Page - 1)&searchValue=@Model.SearchValue"><i class="fa fa-angle-left"></i></a></li> *@
+
+                <li><a href="javascript:;" onclick="doSearch(@(Model.Page + 1))"><i class="fa fa-angle-double-left"></i></a></li>
+                <li><a href="javascript:;" onclick="doSearch(@(Model.Page - 1)"><i class="fa fa-angle-left"></i></a></li>
+
+            }
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                if (i == Model.Page)
+                {
+
+                    <li class="active"><a href="#">@i</a></li>
+                }
+                else
+                {
+                    @*  <li><a href="~/Admin/Category?page=@i&searchValue=@Model.SearchValue">@i</a></li> *@
+                    <li><a href="javascript:;" onclick="doSearch(@i)">@i</a></li>
+                }
+            }
+            @if (Model.Page < Model.PageCount)
+            {
+                @* <li><a href="~/Admin/Customer?page=@(Model.Page + 1)&searchValue=@Model.SearchValue"><i class="fa fa-angle-right"></i></a></li>
+        <li><a href="~/Admin/Customer?page=@Model.PageCount&searchValue=@Model.SearchValue"><i class="fa fa-angle-double-right"></i></a></li> *@
+
+                <li><a href="javascript:;" onclick="doSearch(@(Model.Page + 1))"><i class="fa fa-angle-right"></i></a></li>
+                <li>
+                    <a href="javascript:;" onclick="doSearch(@Model.PageCount)">
+                        <i class="fa fa-angle-double-right"></i>
+
+                    </a>
+
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@if (Model.PageCount > 5)
+{
+    <div class="text-center">
+        <div class="row">
+            <ul class="pagination">
+                @if (Model.Page > 1)
+                {
+                    @* <li><a href="~/Admin/Customer?page=1&searchValue=@Model.SearchValue"><i class="fa fa-angle-double-left"></i></a></li>
+            <li><a href="~/Admin/Customer?page=@(@Model.Page - 1)&searchValue=@Model.SearchValue"><i class="fa fa-angle-left"></i></a></li> *@
+
+                    <li><a href="javascript:;" onclick="doSearch(1)"><i class="fa fa-angle-double-left"></i></a></li>
+                    <li><a href="javascript:;" onclick="doSearch(@(Model.Page - 1))"><i class="fa fa-angle-left"></i></a></li>
+
+                    if (Model.Page > 3)
+                    {
+                        <li><a tabindex="0" role="button" data-container="body" data-toggle="popover" title="Go to page">...</a></li>
+                    }
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    if (i == Model.Page)
+                    {
+
+                        <li class="active"><a href="#">@i</a></li>
+                    }
+                    else
+                    {
+                        @* <li><a href="~/Admin/Customer?page=@i&searchValue=@Model.SearchValue">@i</a></li> *@
+                        <li><a href="javascript:;" onclick="doSearch(@i)">@i</a></li>
+                    }
+                }
+
+                @if (Model.Page < Model.PageCount)
+                {
+                    if (Model.Page < Model.PageCount - 2)
+                    {
+                        <li><a tabindex="0" role="button" data-container="body" data-toggle="popover" title="Go to page">...</a></li>
+                    }
+                    @* <li><a href="~/Admin/Customer?page=@(Model.Page + 1)&searchValue=@Model.SearchValue"><i class="fa fa-angle-right"></i></a></li>
+            <li><a href="~/Admin/Customer?page=@Model.PageCount&searchValue=@Model.SearchValue"><i class="fa fa-angle-double-right"></i></a></li> *@
+
+                    <li><a href="javascript:;" onclick="doSearch(@(Model.Page + 1))"><i class="fa fa-angle-right"></i></a></li>
+                    <li>
+                        <a href="javascript:;" onclick="doSearch(@Model.PageCount)">
+                            <i class="fa fa-angle-double-right"></i>
+
+                        </a>
+
+                    </li>
+                }
+
+            </ul>
+
+        </div>
+
+    </div>
+}

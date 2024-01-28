@@ -1,0 +1,100 @@
+﻿@model SV20T1080026.Web.Models.PaginationSearchInput
+@using SV20T1080026.BusinessLayers
+@{
+    ViewBag.Title = "Quản lí mặt hàng";
+}
+
+<div class="container-fluid box box-primary">
+    <div class="box-body">
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-warning">
+                <p>@ViewBag.ErrorMessage</p>
+            </div>
+        }
+        <form id="formSearchInput" action="~/Admin/Product/Search" method="get" enctype="multipart/form-data">
+            @Html.HiddenFor(m => m.PageSize)
+            <div class="row">
+                <div class="col-sm-3">
+                    <select class="form-control" id="cate">
+                        @{
+                            int rwca = 0;
+                            var cate = CommonDataService.ListOfCategories(out rwca, 1, 0, "");
+                        }
+                        <option value="0">-- Loại hàng --</option>
+
+                        @foreach (var ca in cate)
+                        {
+                            <option value="@ca.CategoryID">@ca.CategoryName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control" id="sup">
+                        @{
+                            int rwsu = 0;
+                            var supp = CommonDataService.ListOfSuppliers(out rwsu, 1, 0, "");
+                        }
+                        <option value="0">-- Nhà cung cấp --</option>
+                        @foreach (var su in supp)
+                        {
+                            <option value="@su.SupplierID">@su.SupplierName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-6 input-group">
+                    <input type="text" name="searchValue" value="@Model.SearchValue"
+                           class="form-control"
+                           placeholder="Nhập tên mặt hàng cần tìm">
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <a href="~/Admin/Product/Create"
+                           class="btn btn-flat btn-primary"
+                           style="margin-left:5px;">
+                            <i class="fa fa-plus"></i> Bổ sung
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </form>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#formSearchInput").submit(function (e) {
+                e.preventDefault();
+                doSearch(1);
+                return;
+            });
+            doSearch(@Model.Page);
+        });
+        function doSearch(page) {
+            var url = $("#formSearchInput").prop("action");
+            var postData = $("#formSearchInput").serializeArray();
+            postData.push(
+                { "name": "page", "value": page },
+                { "name": "categoryId", "value": $('#cate').val() },
+                { "name": "supplierId", "value": $('#sup').val() }
+            );
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: postData,
+                error: function () {
+                    alert("Your request is not valid!");
+                },
+                success: function (data) {
+                    $("#searchResult").html(data);
+                }
+            });
+
+            return;
+        }
+    </script>
+}

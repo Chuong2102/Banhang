@@ -1,0 +1,52 @@
+﻿@model HomeIndexModel
+@{
+    ViewData["Title"] = "Trang chủ";
+
+}
+
+
+<h1>
+    @ViewBag.TitleMessage
+</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr class="bg-primary">
+            <th>ID</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.ListOfPersons)
+        {
+            <tr>
+                <td>@p.PersonId</td>
+                <td>@p?.Name</td>
+                <td>@p?.Address</td>
+                <td>@p?.Email</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<table class="table table-bordered">
+    <thead>
+        <tr class="bg-primary">
+            <th>StudentId</th>
+            <th>Student name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.ListOfStudents)
+        {
+            <tr>
+                <td>@p.StudentId</td>
+                <td>@p?.StudentName</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

@@ -1,0 +1,131 @@
+﻿@model SV20T1080026.Web.Models.PaginationSearchSupplier
+@{
+    ViewBag.Title = "Danh sách nhà cung cấp";
+}
+
+
+<div class="box box-primary">
+    <div class="box-body">
+        <!-- search form -->
+        <form action="#" method="get" class="">
+            <div class="input-group">
+                <input type="text" name="searchValue" class="form-control" placeholder="Nhập tên nhà cung cấp cần tìm...">
+                
+                <span class="input-group-btn">
+                    <button style="margin-right: 10px" type="submit" name="search" id="search-btn" class="btn ">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <!--Bo sung-->
+                    <a href="~/Admin/Supplier/Create" class="btn btn-primary btn-flat">
+                        <i class="fa fa-plus"></i> Bổ sung
+                    </a>
+                </span>
+            </div>
+        </form>
+        <!-- Danh sách các nhà cung cấp  -->
+
+        <p style="margin: 10px 0px 10px 0px ">Có <strong>@string.Format("{0:N0}", Model.RowCount)</strong> Nhà cung cấp. Hiện đang ở trang <strong>@Model.Page</strong> trên tổng số <strong>@Model.PageCount</strong> trang</p>
+        
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-warning">
+                <p>@ViewBag.ErrorMessage</p>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr class="bg-primary">
+                        <th>Tên nhà cung cấp</th>
+                        <th>Tên giao dịch</th>
+                        <th>Tỉnh thành</th>
+                        <th>Địa chỉ</th>
+                        <th>Điện thoại</th>
+                        <th>Thư điện tử</th>
+                        <th>
+                            
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var sup in Model.Data)
+                    {
+                        <tr>
+                            <td>@sup.SupplierName</td>
+                            <td>@sup.ContactName</td>
+                            <td>@sup.Provice</td>
+                            <td>@sup.Address</td>
+                            <td>@sup.Phone</td>
+                            <td>@sup.Email</td>
+                            <td>
+                                <a href="~/Admin/Supplier/Edit?id=@sup.SupplierID" class="btn btn-xs btn-info">
+                                    <i class="fa fa-edit"></i>    
+                                </a>
+                                <a href="~/Admin/Supplier/Delete?id=@sup.SupplierID" class="btn btn-xs btn-danger">
+                                    <i class="fa fa-remove"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @{
+            int startPage = Math.Max(Model.Page - 2, 1);
+            int endPage = Math.Min(Model.Page + 2, Model.PageCount);
+
+            if (startPage == 1)
+            {
+                endPage = startPage + 4;
+            }
+            else if (endPage == Model.PageCount)
+            {
+                startPage = endPage - 4;
+            }
+        }
+
+        @if (Model.PageCount > 1)
+        {
+            <div class="text-center">
+                <ul class="pagination">
+                    @if (Model.Page > 1)
+                    {
+                        <li><a href="~/Admin/Supplier?page=1&searchValue=@Model.SearchValue"><i class="fa fa-angle-double-left"></i></a></li>
+                        <li><a href="~/Admin/Supplier?page=@(@Model.Page - 1)&searchValue=@Model.SearchValue"><i class="fa fa-angle-left"></i></a></li>
+                        if (Model.Page > 3)
+                        {
+                            <li><a href="#" style="pointer-events: none">...</a></li>
+                        }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        if (i == Model.Page)
+                        {
+
+                            <li class="active"><a href="#">@i</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="~/Admin/Supplier?page=@i&searchValue=@Model.SearchValue">@i</a></li>
+                        }
+                    }
+
+                    @if (Model.Page < Model.PageCount)
+                    {
+                        if (Model.Page < Model.PageCount - 2)
+                        {
+                            <li><a href="#" style="pointer-events: none">...</a></li>
+                        }
+                        <li><a href="~/Admin/Supplier?page=@(Model.Page + 1)&searchValue=@Model.SearchValue"><i class="fa fa-angle-right"></i></a></li>
+                        <li><a href="~/Admin/Supplier?page=@Model.PageCount&searchValue=@Model.SearchValue"><i class="fa fa-angle-double-right"></i></a></li>
+                    }
+                </ul>
+            </div>
+        }
+
+    </div>
+
+</div>

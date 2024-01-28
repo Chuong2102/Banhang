@@ -1,0 +1,71 @@
+﻿@using SV20T1080026.Web;
+@model SV20T1080026.DomainModels.Customer
+@{
+    
+    List<SV20T1080026.DomainModels.Province> provinces = ViewBag.listOfProvinces;
+}
+
+
+<div class="box box-primary">
+    <div class="box-body">
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-warning">
+                <p>@ViewBag.ErrorMessage</p>
+            </div>
+        }
+        <form action="~/Admin/Customer/Save" method="post">
+
+            
+            @Html.HiddenFor(c => c.CustomerID)
+            
+
+            <div class="form-group">
+                <label>Tên khách hàng</label>
+                @Html.TextBoxFor(c => c.CustomerName, new{ @class="form-control", @autofocus="autofocus"})
+                @Html.ValidationMessageFor(m => m.CustomerName,"", new {@style="color:red"})
+            </div>
+
+            <div class="form-group">
+                <label>Tên giao dịch</label>
+                @Html.TextBoxFor(c => c.ContactName, new {@class="form-control"})
+                @Html.ValidationMessageFor(m => m.ContactName,"", new {@style="color:red"})
+            </div>
+
+            <div class="form-group">
+                <label>Địa chỉ</label>
+                @Html.TextBoxFor(c => c.Address, new {@class="form-control"})
+                @Html.ValidationMessageFor(m => m.Address,"", new {@style="color:red"})
+            </div>
+
+            <div class="form-group">
+                <label>Tỉnh thành</label>
+                
+                @Html.DropDownListFor(c => c.Province, SelectListHelper.Provinces(), new {@class="form-control"})
+                @Html.ValidationMessageFor(m => m.Province,"", new {@style="color:red"})
+
+            </div>
+
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                @Html.TextBoxFor(c => c.Phone, new {@class="form-control"})
+                @Html.ValidationMessageFor(m => m.Phone,"", new {@style="color:red"})
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                @Html.TextBoxFor(c => c.Email, new {@class="form-control"})
+                @Html.ValidationMessageFor(m => m.Email,"", new {@style="color:red"})
+            </div>
+
+            <div class="">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"></i> Lưu dữ liệu
+                </button>
+
+                <a href="~/Admin/Customer" class="btn btn-default">Quay lại</a>
+
+            </div>
+        </form>
+    </div>
+</div>
